@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-roles
+      author: SquareSweet
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_roles_users
+                    references: users(id)
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_roles_roles
+                    references: roles(id)
+              - column:
+                  name: assigned_by
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_user_roles_users_assigned
+                    references: users(id)
+              - column:
+                  name: assigned_on
+                  type: timestamp
+              - column:
+                  name: revoked_by
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_user_roles_users_revoked
+                    references: users(id)
+              - column:
+                  name: revoked_on
+                  type: timestamp
