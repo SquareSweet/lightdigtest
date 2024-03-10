@@ -9,6 +9,8 @@ public interface UserService {
 
     User getUserByUsername(String username);
 
+    List<User> getUsersByPartialUsername(String username);
+
     List<User> getAllUsers();
 
     User save(User user);

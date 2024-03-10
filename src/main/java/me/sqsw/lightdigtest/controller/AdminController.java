@@ -1,8 +1,11 @@
 package me.sqsw.lightdigtest.controller;
 
 import lombok.RequiredArgsConstructor;
+import me.sqsw.lightdigtest.dto.RequestFullDto;
 import me.sqsw.lightdigtest.dto.UserInfo;
+import me.sqsw.lightdigtest.model.RequestState;
 import me.sqsw.lightdigtest.service.AdminService;
+import me.sqsw.lightdigtest.service.RequestService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final RequestService requestService;
 
     @GetMapping("users")
     public List<UserInfo> getAllUsers() {
@@ -19,7 +23,7 @@ public class AdminController {
     }
 
     @GetMapping("users/{userId}")
-    public UserInfo getAllUsers(@PathVariable Long userId) {
+    public UserInfo getUser(@PathVariable Long userId) {
         return adminService.getUser(userId);
     }
 
@@ -31,5 +35,13 @@ public class AdminController {
     @PostMapping ("users/{userId}/revoke_permissions")
     public UserInfo revokePermissions(@PathVariable Long userId) {
         return adminService.revokeOperatorPermissions(userId);
+    }
+
+    @GetMapping("/requests")
+    public List<RequestFullDto> getUserRequests(@RequestParam(required = false) String username,
+                                                @RequestParam(defaultValue = "0") Integer page,
+                                                @RequestParam(required = false) String sort) {
+        List<RequestState> states = List.of(RequestState.SENT, RequestState.ACCEPTED, RequestState.DENIED);
+        return requestService.geAllRequests(username, states, page, sort);
     }
 }

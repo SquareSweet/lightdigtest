@@ -36,6 +36,33 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public List<RequestFullDto> geAllRequests(String username, List<RequestState> states, Integer page, String sort) {
+        Sort sortValue;
+        if (sort == null) {
+            sortValue = Sort.unsorted();
+        } else if (sort.equals("old")) {
+            sortValue = Sort.by("sentOn").ascending();
+        } else if (sort.equals("new")) {
+            sortValue = Sort.by("sentOn").descending();
+        } else {
+            throw new IllegalArgumentException("Unknown sort value: " + sort);
+        }
+        if (username != null) {
+            List<Long> userIds = userService.getUsersByPartialUsername(username).stream()
+                    .map(User::getId)
+                    .collect(Collectors.toList());
+            return requestRepository.findByUserIdInAndStateIn(userIds, states,
+                            PageRequest.of(page, 5, sortValue)).stream()
+                    .map(requestMapper::toRequestFull)
+                    .collect(Collectors.toList());
+        } else {
+            return requestRepository.findByStateIn(states, PageRequest.of(page, 5, sortValue)).stream()
+                    .map(requestMapper::toRequestFull)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
     public RequestFullDto getOwnRequest(Long requestId) {
         User user = getUserFromContext();
         Request request = requestRepository.findById(requestId)
@@ -65,6 +92,14 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    public RequestFullDto getRequest(Long requestId) {
+        Request request = requestRepository.findByIdAndState(requestId, RequestState.SENT)
+                .orElseThrow(() -> new RequestNotFoundException(requestId));
+        return requestMapper.toRequestFull(request);
+    }
+
+    @Override
+    @Transactional
     public RequestFullDto edit(RequestCreateDto requestDto, Long requestId) {
         User user = getUserFromContext();
         Request request = requestRepository.findById(requestId)
@@ -86,6 +121,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public RequestFullDto send(Long requestId) {
         User user = getUserFromContext();
         Request request = requestRepository.findById(requestId)
@@ -95,6 +131,32 @@ public class RequestServiceImpl implements RequestService {
         }
         request.setState(RequestState.SENT);
         request.setSentOn(LocalDateTime.now());
+        request = requestRepository.save(request);
+        return requestMapper.toRequestFull(request);
+    }
+
+    @Override
+    @Transactional
+    public RequestFullDto accept(Long requestId) {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestNotFoundException(requestId));
+        if (request.getState() != RequestState.SENT) {
+            throw new AccessDeniedException("Access denied");
+        }
+        request.setState(RequestState.ACCEPTED);
+        request = requestRepository.save(request);
+        return requestMapper.toRequestFull(request);
+    }
+
+    @Override
+    @Transactional
+    public RequestFullDto deny(Long requestId) {
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestNotFoundException(requestId));
+        if (request.getState() != RequestState.SENT) {
+            throw new AccessDeniedException("Access denied");
+        }
+        request.setState(RequestState.DENIED);
         request = requestRepository.save(request);
         return requestMapper.toRequestFull(request);
     }

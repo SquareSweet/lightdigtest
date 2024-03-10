@@ -23,6 +23,8 @@ public class Request {
 
     private String title;
     private String text;
+
+    @Enumerated(EnumType.STRING)
     private RequestState state;
 
     @Column(name = "phone_number")

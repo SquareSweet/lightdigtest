@@ -27,6 +27,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getUsersByPartialUsername(String username) {
+        return userRepository.findByUsernameLikeIgnoreCase(username);
+    }
+
+    @Override
     public List<User> getAllUsers() {
         return IterableUtils.toList(userRepository.findAll());
     }
