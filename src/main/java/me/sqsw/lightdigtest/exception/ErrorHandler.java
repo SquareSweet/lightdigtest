@@ -3,6 +3,7 @@ package me.sqsw.lightdigtest.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,6 +22,32 @@ public class ErrorHandler {
                         .message(exception.getMessage())
                         .reason(exception.getLocalizedMessage())
                         .status(HttpStatus.UNAUTHORIZED)
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleForbidden(Exception exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(ApiError.builder()
+                        .message(exception.getMessage())
+                        .reason(exception.getLocalizedMessage())
+                        .status(HttpStatus.FORBIDDEN)
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+
+    @ExceptionHandler({UserNotFoundException.class, RoleNotFoundException.class, RequestNotFoundException.class})
+    public ResponseEntity<ApiError> handleNotFound(Exception exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiError.builder()
+                        .message(exception.getMessage())
+                        .reason(exception.getLocalizedMessage())
+                        .status(HttpStatus.NOT_FOUND)
                         .timestamp(LocalDateTime.now())
                         .build());
     }
