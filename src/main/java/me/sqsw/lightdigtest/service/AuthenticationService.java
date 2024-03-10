@@ -4,5 +4,8 @@ import me.sqsw.lightdigtest.dto.JwtRequest;
 import me.sqsw.lightdigtest.dto.JwtResponse;
 
 public interface AuthenticationService {
-    JwtResponse createAuthToken(JwtRequest authRequest);
+    JwtResponse login(JwtRequest authRequest);
+    JwtResponse createAccessToken(String refreshToken);
+    JwtResponse createRefreshToken(String refreshToken);
+    void logout(String refreshToken);
 }
