@@ -2,6 +2,7 @@ package me.sqsw.lightdigtest.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.sqsw.lightdigtest.dto.RequestFullDto;
+import me.sqsw.lightdigtest.dto.RequestShortDto;
 import me.sqsw.lightdigtest.model.RequestState;
 import me.sqsw.lightdigtest.service.RequestService;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,9 @@ public class OperatorController {
     private final RequestService requestService;
 
     @GetMapping("/requests")
-    public List<RequestFullDto> getUserRequests(@RequestParam(required = false) String username,
-                                                @RequestParam(defaultValue = "0") Integer page,
-                                                @RequestParam(required = false) String sort) {
+    public List<RequestShortDto> getUserRequests(@RequestParam(required = false) String username,
+                                                 @RequestParam(defaultValue = "0") Integer page,
+                                                 @RequestParam(required = false) String sort) {
         return requestService.geAllRequests(username, List.of(RequestState.SENT), page, sort);
     }
 

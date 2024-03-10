@@ -1,7 +1,7 @@
 package me.sqsw.lightdigtest.controller;
 
 import lombok.RequiredArgsConstructor;
-import me.sqsw.lightdigtest.dto.RequestFullDto;
+import me.sqsw.lightdigtest.dto.RequestShortDto;
 import me.sqsw.lightdigtest.dto.UserInfo;
 import me.sqsw.lightdigtest.model.RequestState;
 import me.sqsw.lightdigtest.service.AdminService;
@@ -38,9 +38,9 @@ public class AdminController {
     }
 
     @GetMapping("/requests")
-    public List<RequestFullDto> getUserRequests(@RequestParam(required = false) String username,
-                                                @RequestParam(defaultValue = "0") Integer page,
-                                                @RequestParam(required = false) String sort) {
+    public List<RequestShortDto> getUserRequests(@RequestParam(required = false) String username,
+                                                 @RequestParam(defaultValue = "0") Integer page,
+                                                 @RequestParam(required = false) String sort) {
         List<RequestState> states = List.of(RequestState.SENT, RequestState.ACCEPTED, RequestState.DENIED);
         return requestService.geAllRequests(username, states, page, sort);
     }

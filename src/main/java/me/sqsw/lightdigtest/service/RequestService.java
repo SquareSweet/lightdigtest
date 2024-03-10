@@ -2,6 +2,7 @@ package me.sqsw.lightdigtest.service;
 
 import me.sqsw.lightdigtest.dto.RequestCreateDto;
 import me.sqsw.lightdigtest.dto.RequestFullDto;
+import me.sqsw.lightdigtest.dto.RequestShortDto;
 import me.sqsw.lightdigtest.model.RequestState;
 
 import java.util.List;
@@ -9,11 +10,11 @@ import java.util.List;
 public interface RequestService {
     RequestFullDto create(RequestCreateDto request);
 
-    List<RequestFullDto> geAllRequests(String username, List<RequestState> states, Integer page, String sort);
+    List<RequestShortDto> geAllRequests(String username, List<RequestState> states, Integer page, String sort);
 
     RequestFullDto getOwnRequest(Long requestId);
 
-    List<RequestFullDto> getUserOwnRequests(Integer page, String sort);
+    List<RequestShortDto> getUserOwnRequests(Integer page, String sort);
 
     RequestFullDto getRequest(Long requestId);
 

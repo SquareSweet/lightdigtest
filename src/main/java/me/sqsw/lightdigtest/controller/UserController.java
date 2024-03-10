@@ -1,8 +1,10 @@
 package me.sqsw.lightdigtest.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.sqsw.lightdigtest.dto.RequestCreateDto;
 import me.sqsw.lightdigtest.dto.RequestFullDto;
+import me.sqsw.lightdigtest.dto.RequestShortDto;
 import me.sqsw.lightdigtest.service.RequestService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +22,13 @@ public class UserController {
     }
 
     @GetMapping("/requests")
-    public List<RequestFullDto> getRequests(@RequestParam(defaultValue = "0") Integer page,
-                                            @RequestParam(required = false) String sort) {
+    public List<RequestShortDto> getRequests(@RequestParam(defaultValue = "0") Integer page,
+                                             @RequestParam(required = false) String sort) {
         return requestService.getUserOwnRequests(page, sort);
     }
 
     @PostMapping("/requests/create")
-    public RequestFullDto createRequest(@RequestBody RequestCreateDto request) {
+    public RequestFullDto createRequest(@RequestBody @Valid RequestCreateDto request) {
         return requestService.create(request);
     }
 

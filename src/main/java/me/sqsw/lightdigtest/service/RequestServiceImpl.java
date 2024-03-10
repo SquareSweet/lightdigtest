@@ -3,6 +3,7 @@ package me.sqsw.lightdigtest.service;
 import lombok.RequiredArgsConstructor;
 import me.sqsw.lightdigtest.dto.RequestCreateDto;
 import me.sqsw.lightdigtest.dto.RequestFullDto;
+import me.sqsw.lightdigtest.dto.RequestShortDto;
 import me.sqsw.lightdigtest.exception.RequestNotFoundException;
 import me.sqsw.lightdigtest.mapper.RequestMapper;
 import me.sqsw.lightdigtest.model.Request;
@@ -36,7 +37,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestFullDto> geAllRequests(String username, List<RequestState> states, Integer page, String sort) {
+    public List<RequestShortDto> geAllRequests(String username, List<RequestState> states, Integer page, String sort) {
         Sort sortValue;
         if (sort == null) {
             sortValue = Sort.unsorted();
@@ -53,11 +54,11 @@ public class RequestServiceImpl implements RequestService {
                     .collect(Collectors.toList());
             return requestRepository.findByUserIdInAndStateIn(userIds, states,
                             PageRequest.of(page, 5, sortValue)).stream()
-                    .map(requestMapper::toRequestFull)
+                    .map(requestMapper::requestShort)
                     .collect(Collectors.toList());
         } else {
             return requestRepository.findByStateIn(states, PageRequest.of(page, 5, sortValue)).stream()
-                    .map(requestMapper::toRequestFull)
+                    .map(requestMapper::requestShort)
                     .collect(Collectors.toList());
         }
     }
@@ -74,7 +75,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<RequestFullDto> getUserOwnRequests(Integer page, String sort) {
+    public List<RequestShortDto> getUserOwnRequests(Integer page, String sort) {
         User user = getUserFromContext();
         Sort sortValue;
         if (sort == null) {
@@ -87,7 +88,7 @@ public class RequestServiceImpl implements RequestService {
             throw new IllegalArgumentException("Unknown sort value: " + sort);
         }
         return requestRepository.findByUserId(user.getId(), PageRequest.of(page, 5, sortValue)).stream()
-                .map(requestMapper::toRequestFull)
+                .map(requestMapper::requestShort)
                 .collect(Collectors.toList());
     }
 
