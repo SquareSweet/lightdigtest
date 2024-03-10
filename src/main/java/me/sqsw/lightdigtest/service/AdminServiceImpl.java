@@ -10,6 +10,7 @@ import me.sqsw.lightdigtest.model.User;
 import me.sqsw.lightdigtest.repository.RoleRepository;
 import me.sqsw.lightdigtest.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public UserInfo grantOperatorPermissions(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Role role = roleRepository.findByName("ROLE_OPERATOR").orElseThrow(() -> new RoleNotFoundException("ROLE_OPERATOR"));
@@ -41,6 +43,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public UserInfo revokeOperatorPermissions(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         Role role = roleRepository.findByName("ROLE_OPERATOR").orElseThrow(() -> new RoleNotFoundException("ROLE_OPERATOR"));
