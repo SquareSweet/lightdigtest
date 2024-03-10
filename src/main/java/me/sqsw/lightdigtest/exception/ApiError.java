@@ -1,4 +1,4 @@
-package me.sqsw.lightdigtest.common;
+package me.sqsw.lightdigtest.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;

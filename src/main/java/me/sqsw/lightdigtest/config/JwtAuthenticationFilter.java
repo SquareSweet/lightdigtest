@@ -1,4 +1,4 @@
-package me.sqsw.lightdigtest.common;
+package me.sqsw.lightdigtest.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -7,12 +7,13 @@ import me.sqsw.lightdigtest.utils.JwtTokenUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UserService userService;
+    private final UserDetailsService userDetailsService;
     private final JwtTokenUtils tokenUtils;
     private final AuthenticationManager authenticationManager;
 
@@ -22,7 +23,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
         );
 
-        UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
         String token = tokenUtils.generateJwtToken(userDetails);
 
         return new JwtResponse(token);
