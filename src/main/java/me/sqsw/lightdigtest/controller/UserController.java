@@ -20,12 +20,23 @@ public class UserController {
     }
 
     @GetMapping("/requests")
-    public List<RequestFullDto> getRequest() {
-        return requestService.getUserRequests();
+    public List<RequestFullDto> getRequests(@RequestParam(defaultValue = "0") Integer page,
+                                            @RequestParam(required = false) String sort) {
+        return requestService.getUserOwnRequests(page, sort);
     }
 
     @PostMapping("/requests/create")
     public RequestFullDto createRequest(@RequestBody RequestCreateDto request) {
         return requestService.create(request);
+    }
+
+    @PostMapping("/requests/{requestId}/edit")
+    public RequestFullDto editRequest(@RequestBody RequestCreateDto request, @PathVariable Long requestId) {
+        return requestService.edit(request, requestId);
+    }
+
+    @PostMapping("/requests/{requestId}/send")
+    public RequestFullDto createRequest(@PathVariable Long requestId) {
+        return requestService.send(requestId);
     }
 }

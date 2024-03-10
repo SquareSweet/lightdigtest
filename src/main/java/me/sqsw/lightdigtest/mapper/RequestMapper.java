@@ -20,7 +20,7 @@ public class RequestMapper {
                 .user(user)
                 .title(request.getTitle())
                 .text(request.getText())
-                .state(request.getState() == null ? RequestState.DRAFT : request.getState())
+                .state(RequestState.DRAFT)
                 .phoneNumber(request.getPhoneNumber())
                 .createdOn(LocalDateTime.now())
                 .build();

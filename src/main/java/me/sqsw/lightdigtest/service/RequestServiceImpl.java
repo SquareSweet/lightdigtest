@@ -6,13 +6,17 @@ import me.sqsw.lightdigtest.dto.RequestFullDto;
 import me.sqsw.lightdigtest.exception.RequestNotFoundException;
 import me.sqsw.lightdigtest.mapper.RequestMapper;
 import me.sqsw.lightdigtest.model.Request;
+import me.sqsw.lightdigtest.model.RequestState;
 import me.sqsw.lightdigtest.model.User;
 import me.sqsw.lightdigtest.repository.RequestRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,16 +40,63 @@ public class RequestServiceImpl implements RequestService {
         User user = getUserFromContext();
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new RequestNotFoundException(requestId));
-        if (!request.getUser().equals(user)) throw new AccessDeniedException("Access denied");
+        if (!request.getUser().equals(user) || request.getState() == RequestState.SENT) {
+            throw new AccessDeniedException("Access denied");
+        }
         return requestMapper.toRequestFull(request);
     }
 
     @Override
-    public List<RequestFullDto> getUserRequests() {
+    public List<RequestFullDto> getUserOwnRequests(Integer page, String sort) {
         User user = getUserFromContext();
-        return requestRepository.findByUserId(user.getId()).stream()
+        Sort sortValue;
+        if (sort == null) {
+            sortValue = Sort.unsorted();
+        } else if (sort.equals("old")) {
+            sortValue = Sort.by("createdOn").ascending();
+        } else if (sort.equals("new")) {
+            sortValue = Sort.by("createdOn").descending();
+        } else {
+            throw new IllegalArgumentException("Unknown sort value: " + sort);
+        }
+        return requestRepository.findByUserId(user.getId(), PageRequest.of(page, 5, sortValue)).stream()
                 .map(requestMapper::toRequestFull)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public RequestFullDto edit(RequestCreateDto requestDto, Long requestId) {
+        User user = getUserFromContext();
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestNotFoundException(requestId));
+        if (!request.getUser().equals(user) || request.getState() != RequestState.DRAFT) {
+            throw new AccessDeniedException("Access denied");
+        }
+        if (requestDto.getTitle() != null && !requestDto.getTitle().isBlank()) {
+            request.setTitle(requestDto.getTitle());
+        }
+        if (requestDto.getText() != null && !requestDto.getText().isBlank()) {
+            request.setText(requestDto.getText());
+        }
+        if (requestDto.getPhoneNumber() != null && !requestDto.getPhoneNumber().isBlank()) {
+            request.setPhoneNumber(requestDto.getPhoneNumber());
+        }
+        request = requestRepository.save(request);
+        return requestMapper.toRequestFull(request);
+    }
+
+    @Override
+    public RequestFullDto send(Long requestId) {
+        User user = getUserFromContext();
+        Request request = requestRepository.findById(requestId)
+                .orElseThrow(() -> new RequestNotFoundException(requestId));
+        if (!request.getUser().equals(user) || request.getState() != RequestState.DRAFT) {
+            throw new AccessDeniedException("Access denied");
+        }
+        request.setState(RequestState.SENT);
+        request.setSentOn(LocalDateTime.now());
+        request = requestRepository.save(request);
+        return requestMapper.toRequestFull(request);
     }
 
     private User getUserFromContext() {

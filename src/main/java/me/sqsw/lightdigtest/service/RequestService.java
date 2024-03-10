@@ -10,5 +10,9 @@ public interface RequestService {
 
     RequestFullDto getOwnRequest(Long requestId);
 
-    List<RequestFullDto> getUserRequests();
+    List<RequestFullDto> getUserOwnRequests(Integer page, String sort);
+
+    RequestFullDto edit(RequestCreateDto request, Long requestId);
+
+    RequestFullDto send(Long requestId);
 }
