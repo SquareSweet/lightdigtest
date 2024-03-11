@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop-service-columns-user-roles
+      author: SquareSweet
+      comment: "Service columns are unnecessary for this project"
+      changes:
+        - dropColumn:
+            columns:
+              - column:
+                  name: assigned_by
+              - column:
+                  name: assigned_on
+              - column:
+                  name: revoked_by
+              - column:
+                  name: revoked_on
+            tableName: user_roles

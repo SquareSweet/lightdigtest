@@ -1,0 +1,17 @@
+version: '4.14.1'
+services:
+  db:
+    image: postgres:16.2-alpine
+    container_name: lightdig-test-postgres
+    ports:
+      - "127.0.0.1:6432:5432"
+    environment:
+      - POSTGRES_DB=lightdig-test
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+  cache:
+    image: redis:7.2-alpine
+    restart: always
+    ports:
+      - '127.0.0.1:6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
