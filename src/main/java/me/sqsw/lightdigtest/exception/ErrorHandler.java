@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ErrorHandler {
     @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<ApiError> handleUnauthorized(Exception exception) {
         log.error(exception.getMessage());
         return ResponseEntity
@@ -27,6 +29,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<ApiError> handleForbidden(Exception exception) {
         log.error(exception.getMessage());
         return ResponseEntity
@@ -40,6 +43,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({UserNotFoundException.class, RoleNotFoundException.class, RequestNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ApiError> handleNotFound(Exception exception) {
         log.error(exception.getMessage());
         return ResponseEntity
@@ -53,6 +57,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiError> handleException(Exception exception) {
         log.error(exception.getMessage());
         return ResponseEntity

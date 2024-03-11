@@ -36,6 +36,13 @@ public class SecurityConfig {
                                 .requestMatchers("/api/oper/**").hasAnyRole("OPERATOR", "ADMIN")
                                 .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/v2/api-docs/**",
+                                        "/v3/api-docs/**",
+                                        "/actuator/**"
+                                ).permitAll()
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigurer ->

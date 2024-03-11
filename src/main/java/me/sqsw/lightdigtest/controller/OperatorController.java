@@ -1,5 +1,6 @@
 package me.sqsw.lightdigtest.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import me.sqsw.lightdigtest.dto.RequestFullDto;
 import me.sqsw.lightdigtest.dto.RequestShortDto;
@@ -15,6 +16,7 @@ import java.util.List;
 public class OperatorController {
     private final RequestService requestService;
 
+    @Operation(summary = "Get a list of all requests")
     @GetMapping("/requests")
     public List<RequestShortDto> getUserRequests(@RequestParam(required = false) String username,
                                                  @RequestParam(defaultValue = "0") Integer page,
@@ -22,16 +24,19 @@ public class OperatorController {
         return requestService.geAllRequests(username, List.of(RequestState.SENT), page, sort);
     }
 
+    @Operation(summary = "Get request by its id")
     @GetMapping("/requests/{requestId}")
     public RequestFullDto getRequest(@PathVariable Long requestId) {
         return requestService.getRequest(requestId);
     }
 
+    @Operation(summary = "Accept request by its id")
     @PostMapping("/requests/{requestId}/accept")
     public RequestFullDto acceptRequest(@PathVariable Long requestId) {
         return requestService.accept(requestId);
     }
 
+    @Operation(summary = "Deny request by its id")
     @PostMapping("/requests/{requestId}/deny")
     public RequestFullDto denyRequest(@PathVariable Long requestId) {
         return requestService.deny(requestId);
