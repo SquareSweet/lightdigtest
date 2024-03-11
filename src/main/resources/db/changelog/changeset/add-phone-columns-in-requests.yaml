@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-phone-columns-requests
+      author: SquareSweet
+      changes:
+        - addColumn:
+            columns:
+              - column:
+                  name: phone_country
+                  type: varchar(10)
+              - column:
+                  name: phone_city
+                  type: varchar(10)
+            tableName: requests

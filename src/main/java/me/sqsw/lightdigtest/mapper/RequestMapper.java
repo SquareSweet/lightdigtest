@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.sqsw.lightdigtest.dto.RequestCreateDto;
 import me.sqsw.lightdigtest.dto.RequestFullDto;
 import me.sqsw.lightdigtest.dto.RequestShortDto;
+import me.sqsw.lightdigtest.model.PhoneNumber;
 import me.sqsw.lightdigtest.model.Request;
 import me.sqsw.lightdigtest.model.RequestState;
 import me.sqsw.lightdigtest.model.User;
@@ -16,13 +17,13 @@ import java.time.LocalDateTime;
 public class RequestMapper {
     private final UserMapper userMapper;
 
-    public Request toRequest(RequestCreateDto request, User user) {
+    public Request toRequest(RequestCreateDto request, User user, PhoneNumber cleanedNumber) {
         return Request.builder()
                 .user(user)
                 .title(request.getTitle())
                 .text(request.getText())
                 .state(RequestState.DRAFT)
-                .phoneNumber(request.getPhoneNumber())
+                .phoneNumber(cleanedNumber)
                 .createdOn(LocalDateTime.now())
                 .build();
     }
@@ -34,7 +35,7 @@ public class RequestMapper {
                 .title(request.getTitle())
                 .text(request.getText())
                 .state(request.getState())
-                .phoneNumber(request.getPhoneNumber())
+                .phoneNumber(request.getPhoneNumber().toString())
                 .createdOn(request.getCreatedOn())
                 .sentOn(request.getSentOn())
                 .build();

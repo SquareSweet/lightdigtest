@@ -15,3 +15,5 @@ databaseChangeLog:
       file: db/changelog/changeset/drop-service-columns-in-user-roles-table.yaml
   - include:
       file: db/changelog/changeset/create-requests-table.yaml
+  - include:
+      file: db/changelog/changeset/add-phone-columns-in-requests.yaml

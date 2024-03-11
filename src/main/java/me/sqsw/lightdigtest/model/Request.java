@@ -27,8 +27,8 @@ public class Request {
     @Enumerated(EnumType.STRING)
     private RequestState state;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Embedded
+    private PhoneNumber phoneNumber;
 
     @Column(name = "created_on")
     private LocalDateTime createdOn;

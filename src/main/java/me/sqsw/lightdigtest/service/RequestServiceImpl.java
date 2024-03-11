@@ -10,6 +10,7 @@ import me.sqsw.lightdigtest.model.Request;
 import me.sqsw.lightdigtest.model.RequestState;
 import me.sqsw.lightdigtest.model.User;
 import me.sqsw.lightdigtest.repository.RequestRepository;
+import me.sqsw.lightdigtest.utils.PhoneUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,11 +28,14 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository requestRepository;
     private final UserService userService;
     private final RequestMapper requestMapper;
+    private final PhoneUtils phoneUtils;
 
     @Override
     @Transactional
     public RequestFullDto create(RequestCreateDto requestDto) {
-        Request request = requestMapper.toRequest(requestDto, getUserFromContext());
+
+        Request request = requestMapper.toRequest(requestDto, getUserFromContext(),
+                phoneUtils.getCleanNumber(requestDto.getPhoneNumber()));
         request = requestRepository.save(request);
         return requestMapper.toRequestFull(request);
     }
@@ -115,7 +119,7 @@ public class RequestServiceImpl implements RequestService {
             request.setText(requestDto.getText());
         }
         if (requestDto.getPhoneNumber() != null && !requestDto.getPhoneNumber().isBlank()) {
-            request.setPhoneNumber(requestDto.getPhoneNumber());
+            request.setPhoneNumber(phoneUtils.getCleanNumber(requestDto.getPhoneNumber()));
         }
         request = requestRepository.save(request);
         return requestMapper.toRequestFull(request);
